@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 
@@ -5,6 +6,7 @@ import '../../common/utils/element_utils/element_utils.dart';
 import 'config/image_config.dart';
 import 'image_menu.dart';
 import 'widgets/image.dart';
+import 'widgets/web_cors/responsive_web_image.dart';
 
 class QuillEditorImageEmbedBuilder extends EmbedBuilder {
   QuillEditorImageEmbedBuilder({
@@ -32,15 +34,21 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
     final width = imageSize.width;
     final height = imageSize.height;
 
-    final imageWidget = getImageWidgetByImageSource(
-      context: context,
-      imageSource,
-      imageProviderBuilder: config.imageProviderBuilder,
-      imageErrorWidgetBuilder: config.imageErrorWidgetBuilder,
-      alignment: alignment,
-      height: height,
-      width: width,
-    );
+    final imageWidget = kIsWeb
+        ? ResponsiveWebImage(
+            imagePath: imageSource,
+            width: width,
+            height: height,
+          )
+        : getImageWidgetByImageSource(
+            context: context,
+            imageSource,
+            imageProviderBuilder: config.imageProviderBuilder,
+            imageErrorWidgetBuilder: config.imageErrorWidgetBuilder,
+            alignment: alignment,
+            height: height,
+            width: width,
+          );
 
     return GestureDetector(
       onTap: () {
@@ -57,7 +65,10 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
             imageSource: imageSource,
             imageSize: imageSize,
             readOnly: embedContext.readOnly,
-            imageProvider: imageWidget.image,
+            imageProvider: kIsWeb
+                ? NetworkImage(imageSource)
+                : config.imageProviderBuilder?.call(context, imageSource) ??
+                    NetworkImage(imageSource),
           ),
         );
       },
