@@ -75,13 +75,9 @@ class _WebCorsImageState extends State<WebCorsImage>
 
   late final String _htmlContent;
 
-  // Track the image path to detect changes
-  late String _currentImagePath;
-
   @override
   void initState() {
     super.initState();
-    _currentImagePath = widget.imagePath;
     _initHtmlPage();
     _configureAnimation();
   }
@@ -94,7 +90,6 @@ class _WebCorsImageState extends State<WebCorsImage>
     if (oldWidget.imagePath != widget.imagePath ||
         oldWidget.width != widget.width ||
         oldWidget.height != widget.height) {
-      _currentImagePath = widget.imagePath;
       _initHtmlPage();
 
       // Reload the WebView with the new content

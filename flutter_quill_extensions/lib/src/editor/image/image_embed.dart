@@ -35,8 +35,6 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
 
     final width = imageSize.width;
     final height = imageSize.height;
-
-    // Create image widget and get its provider in one place to avoid duplication
     final imageData = _createImageData(
       context: context,
       imageSource: imageSource,
@@ -83,7 +81,6 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
   }
 }
 
-/// Helper method to create image data and avoid code duplication
 ({
   Widget widget,
   ImageProvider<Object>? provider,
@@ -96,7 +93,6 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
   ImageEmbedBuilderProviderBuilder? imageProviderBuilder,
   ImageEmbedBuilderErrorWidgetBuilder? imageErrorWidgetBuilder,
 }) {
-  // Get screen dimensions for responsive sizing
   final screenSize = MediaQuery.sizeOf(context);
   final defaultWidth = screenSize.width * 0.9;
 
@@ -119,7 +115,6 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
       height: effectiveHeight,
     );
 
-    // Wrap in RepaintBoundary to improve performance and prevent ordering issues
     return (
       widget: RepaintBoundary(
         child: SizedBox(
