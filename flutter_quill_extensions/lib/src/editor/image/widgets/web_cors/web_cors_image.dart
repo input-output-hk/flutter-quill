@@ -9,26 +9,6 @@ import 'web_image_animation_config.dart';
 import 'web_image_feedback_config.dart';
 import 'web_image_view.dart';
 
-/// Example usage:
-///
-/// ```dart
-/// WebCorsImage(
-///   imagePath: 'https://example.com/image.jpg',
-///   height: 300,
-///   width: 400,
-///   displayConfig: const WebImageConfig(
-///     borderRadius: BorderRadius.circular(12),
-///     backgroundColor: Colors.grey[200],
-///     onPointer: true,
-///   ),
-///   feedbackConfig: const WebImageFeedbackConfig(
-///     retryAttempts: 3,
-///   ),
-///   onTap: () => print('Image tapped'),
-///   onImageLoaded: () => print('Image loaded successfully'),
-///   onImageError: (error) => print('Error: $error'),
-/// )
-/// ```
 class WebCorsImage extends StatefulWidget {
   const WebCorsImage({
     required this.imagePath,
