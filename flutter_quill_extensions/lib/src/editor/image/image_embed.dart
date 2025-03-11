@@ -49,22 +49,6 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
 
     final imageWidget = imageData.widget;
 
-    // final imageWidget = kIsWeb
-    //     ? ResponsiveWebImage(
-    //         imagePath: imageSource,
-    //         width: width,
-    //         height: height,
-    //       )
-    //     : getImageWidgetByImageSource(
-    //         context: context,
-    //         imageSource,
-    //         imageProviderBuilder: config.imageProviderBuilder,
-    //         imageErrorWidgetBuilder: config.imageErrorWidgetBuilder,
-    //         alignment: alignment,
-    //         height: height,
-    //         width: width,
-    //       );
-
     return GestureDetector(
       onTap: () {
         final onImageClicked = config.onImageClicked;
@@ -112,28 +96,37 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
   ImageEmbedBuilderProviderBuilder? imageProviderBuilder,
   ImageEmbedBuilderErrorWidgetBuilder? imageErrorWidgetBuilder,
 }) {
-  // Use a better default size - either the provided size or a reasonable default
-  // that's larger than 100px and based on screen size
+  // Get screen dimensions for responsive sizing
   final screenSize = MediaQuery.sizeOf(context);
-  final defaultWidth = screenSize.width * 0.9; // 70% of screen width
+  final defaultWidth = screenSize.width * 0.9;
 
-  // Use provided dimensions or defaults
+  // If width is provided but height is not, maintain aspect ratio
+  // If neither is provided, use responsive defaults
   final effectiveWidth = width ?? defaultWidth;
-  final effectiveHeight = height ??
-      effectiveWidth *
-          0.6; // Maintain reasonable aspect ratio if height not specified
+  final effectiveHeight =
+      height ?? (width != null ? width * 0.75 : defaultWidth * 0.6);
 
   if (kIsWeb) {
+    // Create a unique key based on image source and dimensions
+    // This ensures each image has a stable identity in the document
+    final key =
+        ValueKey('web_image_${imageSource}_${effectiveWidth}_$effectiveHeight');
+
     final webImage = WebCorsImage(
+      key: key,
       imagePath: imageSource,
       width: effectiveWidth,
       height: effectiveHeight,
     );
+
+    // Wrap in RepaintBoundary to improve performance and prevent ordering issues
     return (
-      widget: SizedBox(
-        width: effectiveWidth,
-        height: effectiveHeight,
-        child: webImage,
+      widget: RepaintBoundary(
+        child: SizedBox(
+          width: effectiveWidth,
+          height: effectiveHeight,
+          child: webImage,
+        ),
       ),
       provider: webImage.imageCache
     );
@@ -147,7 +140,18 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
       height: effectiveHeight,
       width: effectiveWidth,
     );
-    return (widget: imageWidget, provider: imageWidget.image);
+
+    // Use the same key-based approach for consistency
+    final key =
+        ValueKey('image_${imageSource}_${effectiveWidth}_$effectiveHeight');
+
+    return (
+      widget: RepaintBoundary(
+        key: key,
+        child: imageWidget,
+      ),
+      provider: imageWidget.image
+    );
   }
 }
 
