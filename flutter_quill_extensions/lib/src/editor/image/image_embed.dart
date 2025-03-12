@@ -94,7 +94,7 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
   ImageEmbedBuilderErrorWidgetBuilder? imageErrorWidgetBuilder,
 }) {
   final screenSize = MediaQuery.sizeOf(context);
-  final defaultWidth = screenSize.width * 0.9;
+  final defaultWidth = screenSize.width * 0.8;
 
   // If width is provided but height is not, maintain aspect ratio
   // If neither is provided, use responsive defaults
@@ -113,6 +113,9 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
       imagePath: imageSource,
       width: effectiveWidth,
       height: effectiveHeight,
+      onImageError: (error) {
+        print('Image error: $error');
+      },
     );
 
     return (

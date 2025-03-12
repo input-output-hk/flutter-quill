@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:webviewimage/webviewimage.dart';
 
@@ -11,7 +10,6 @@ class WebImageView extends StatelessWidget {
     required this.htmlContent,
     required this.height,
     required this.width,
-    required this.debugPrint,
     required this.onWebViewCreated,
     required this.onImageLoad,
     required this.onTap,
@@ -25,7 +23,6 @@ class WebImageView extends StatelessWidget {
   final String htmlContent;
   final double height;
   final double width;
-  final bool debugPrint;
   final void Function(WebViewXController) onWebViewCreated;
   final DartCallback Function() onImageLoad;
   final DartCallback Function() onTap;
@@ -61,14 +58,6 @@ class WebImageView extends StatelessWidget {
                       width: width,
                       javascriptMode: JavascriptMode.unrestricted,
                       onWebViewCreated: onWebViewCreated,
-                      onPageFinished: (src) {
-                        if (debugPrint) {
-                          if (kDebugMode) {
-                            print(
-                                '✓ WebCorsImage: Page has finished loading\n');
-                          }
-                        }
-                      },
                       jsContent: const {
                         EmbeddedJsContent(
                           webJs: 'function onClick() { callbackTap(true) }',

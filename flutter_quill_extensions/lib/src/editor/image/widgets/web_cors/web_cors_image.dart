@@ -6,7 +6,6 @@ import 'error_display.dart';
 import 'loading_indicator.dart';
 import 'web_cors_image_config.dart';
 import 'web_image_animation_config.dart';
-import 'web_image_feedback_config.dart';
 import 'web_image_view.dart';
 
 class WebCorsImage extends StatefulWidget {
@@ -16,13 +15,13 @@ class WebCorsImage extends StatefulWidget {
     required this.width,
     super.key,
     this.imageCache,
-    this.debugPrint = false,
     this.onTap,
     this.onImageLoaded,
     this.onImageError,
     this.displayConfig = const WebImageConfig(),
     this.animationConfig = const WebImageAnimationConfig(),
-    this.feedbackConfig = const WebImageFeedbackConfig(),
+    this.loadingIndicator,
+    this.error,
   });
 
   /// The URL or path of the image to display
@@ -43,12 +42,6 @@ class WebCorsImage extends StatefulWidget {
   /// Animation configuration for transitions
   final WebImageAnimationConfig animationConfig;
 
-  /// Feedback widget configuration (loading, error states)
-  final WebImageFeedbackConfig feedbackConfig;
-
-  /// Print debug information
-  final bool debugPrint;
-
   /// Callback function when the image is tapped
   final VoidCallback? onTap;
 
@@ -57,6 +50,12 @@ class WebCorsImage extends StatefulWidget {
 
   /// Callback function when the image fails to load
   final Function(String error)? onImageError;
+
+  /// Custom loading indicator widget (when null, default LoadingIndicator is used)
+  final Widget? loadingIndicator;
+
+  /// Custom error display widget (when null, default ErrorDisplay is used)
+  final Widget? error;
 
   @override
   State<WebCorsImage> createState() => _WebCorsImageState();
@@ -71,7 +70,6 @@ class _WebCorsImageState extends State<WebCorsImage>
   bool _loading = true;
   bool _error = false;
   String _errorMessage = '';
-  int _retryCount = 0;
 
   late final String _htmlContent;
 
@@ -140,31 +138,6 @@ class _WebCorsImageState extends State<WebCorsImage>
     super.dispose();
   }
 
-  /// Attempts to retry loading the image
-  void _retryLoading() {
-    if (_retryCount < widget.feedbackConfig.retryAttempts) {
-      setState(() {
-        _loading = true;
-        _error = false;
-        _retryCount++;
-      });
-
-      // Reload WebView with the same content
-      Future.delayed(widget.feedbackConfig.retryDelay, () {
-        if (mounted) {
-          try {
-            _webviewController.loadContent(
-              _htmlContent,
-              SourceType.html,
-            );
-          } catch (e) {
-            debugPrint('WebCorsImage: Error reloading content: $e');
-          }
-        }
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Material(
@@ -179,7 +152,6 @@ class _WebCorsImageState extends State<WebCorsImage>
               htmlContent: _htmlContent,
               height: widget.height,
               width: widget.width,
-              debugPrint: widget.debugPrint,
               onWebViewCreated: (controller) => _webviewController = controller,
               onImageLoad: _onImageLoad,
               onTap: _onTap,
@@ -187,23 +159,18 @@ class _WebCorsImageState extends State<WebCorsImage>
               onImageTap: widget.onTap,
             ),
           if (!_error && _loading)
-            LoadingIndicator(
-              height: widget.height,
-              width: widget.width,
-              loadingWidget: widget.feedbackConfig.onLoading,
-              retryCount: _retryCount,
-              maxRetryAttempts: widget.feedbackConfig.retryAttempts,
-            ),
+            widget.loadingIndicator ??
+                LoadingIndicator(
+                  height: widget.height,
+                  width: widget.width,
+                ),
           if (_error)
-            ErrorDisplay(
-              height: widget.height,
-              width: widget.width,
-              errorWidget: widget.feedbackConfig.onError,
-              errorMessage: _errorMessage,
-              retryCount: _retryCount,
-              maxRetryAttempts: widget.feedbackConfig.retryAttempts,
-              onRetry: _retryLoading,
-            ),
+            widget.error ??
+                ErrorDisplay(
+                  height: widget.height,
+                  width: widget.width,
+                  errorMessage: _errorMessage,
+                ),
         ],
       ),
     );
@@ -258,10 +225,6 @@ class _WebCorsImageState extends State<WebCorsImage>
         });
 
         widget.onImageError?.call(errorMsg);
-
-        if (widget.feedbackConfig.retryAttempts > 0) {
-          _retryLoading();
-        }
       },
     );
   }
