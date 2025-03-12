@@ -8,6 +8,7 @@ import 'image_embed_types.dart'
     show ImageEmbedBuilderErrorWidgetBuilder, ImageEmbedBuilderProviderBuilder;
 import 'image_menu.dart';
 import 'widgets/image.dart';
+import 'widgets/web_cors/utils.dart';
 import 'widgets/web_cors/web_cors_image.dart';
 
 class QuillEditorImageEmbedBuilder extends EmbedBuilder {
@@ -45,39 +46,48 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
       imageErrorWidgetBuilder: config.imageErrorWidgetBuilder,
     );
 
-    final imageWidget = imageData.widget;
+    void showImageMenu() {
+      final onImageClicked = config.onImageClicked;
+      if (onImageClicked != null) {
+        onImageClicked(imageSource);
+        return;
+      }
+      showDialog(
+        context: context,
+        builder: (_) => ImageOptionsMenu(
+          controller: embedContext.controller,
+          config: config,
+          imageSource: imageSource,
+          imageSize: imageSize,
+          readOnly: embedContext.readOnly,
+          imageProvider: imageData.provider ?? createPlaceholderImage(),
+        ),
+      );
+    }
 
-    return GestureDetector(
-      onTap: () {
-        final onImageClicked = config.onImageClicked;
-        if (onImageClicked != null) {
-          onImageClicked(imageSource);
-          return;
-        }
-        showDialog(
-          context: context,
-          builder: (_) => ImageOptionsMenu(
-            controller: embedContext.controller,
-            config: config,
-            imageSource: imageSource,
-            imageSize: imageSize,
-            readOnly: embedContext.readOnly,
-            imageProvider: imageData.provider ?? _createPlaceholderImage(),
+    // Wrap the image in a stack with transparent overlay for better tap detection
+    final imageWithOverlay = Stack(
+      children: [
+        imageData.widget,
+        Positioned.fill(
+          child: GestureDetector(
+            onTap: showImageMenu,
+            child: Container(
+              color: Colors.transparent,
+            ),
           ),
-        );
-      },
-      child: Builder(
-        builder: (context) {
-          if (margin != null) {
-            return Padding(
-              padding: EdgeInsets.all(margin),
-              child: imageWidget,
-            );
-          }
-          return imageWidget;
-        },
-      ),
+        ),
+      ],
     );
+
+    if (margin != null) {
+      return Padding(
+        padding: EdgeInsets.all(margin),
+        child: imageWithOverlay,
+      );
+    }
+
+    return imageWithOverlay;
   }
 }
 
@@ -108,14 +118,19 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
     final key =
         ValueKey('web_image_${imageSource}_${effectiveWidth}_$effectiveHeight');
 
+    // Create an ImageProvider for the menu operations
+    final imageProvider = getImageProviderByImageSource(
+      imageSource,
+      context: context,
+      imageProviderBuilder: imageProviderBuilder,
+    );
+
     final webImage = WebCorsImage(
       key: key,
       imagePath: imageSource,
       width: effectiveWidth,
       height: effectiveHeight,
-      onImageError: (error) {
-        print('Image error: $error');
-      },
+      imageCache: imageProvider,
     );
 
     return (
@@ -126,7 +141,7 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
           child: webImage,
         ),
       ),
-      provider: webImage.imageCache
+      provider: imageProvider
     );
   } else {
     final imageWidget = getImageWidgetByImageSource(
@@ -151,79 +166,4 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
       provider: imageWidget.image
     );
   }
-}
-
-/// Creates a simple placeholder image from memory instead of requiring an asset
-ImageProvider _createPlaceholderImage() {
-  // Create a 1x1 pixel transparent image
-  final transparentPixel = Uint8List.fromList([
-    0x89,
-    0x50,
-    0x4E,
-    0x47,
-    0x0D,
-    0x0A,
-    0x1A,
-    0x0A,
-    0x00,
-    0x00,
-    0x00,
-    0x0D,
-    0x49,
-    0x48,
-    0x44,
-    0x52,
-    0x00,
-    0x00,
-    0x00,
-    0x01,
-    0x00,
-    0x00,
-    0x00,
-    0x01,
-    0x08,
-    0x06,
-    0x00,
-    0x00,
-    0x00,
-    0x1F,
-    0x15,
-    0xC4,
-    0x89,
-    0x00,
-    0x00,
-    0x00,
-    0x0A,
-    0x49,
-    0x44,
-    0x41,
-    0x54,
-    0x78,
-    0x9C,
-    0x63,
-    0x00,
-    0x01,
-    0x00,
-    0x00,
-    0x05,
-    0x00,
-    0x01,
-    0x0D,
-    0x0A,
-    0x2D,
-    0xB4,
-    0x00,
-    0x00,
-    0x00,
-    0x00,
-    0x49,
-    0x45,
-    0x4E,
-    0x44,
-    0xAE,
-    0x42,
-    0x60,
-    0x82
-  ]);
-  return MemoryImage(transparentPixel);
 }
