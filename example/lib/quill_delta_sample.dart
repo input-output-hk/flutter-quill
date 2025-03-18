@@ -10,6 +10,13 @@ const kQuillDefaultSample = [
   {
     'insert': {
       'image':
+          'https://bafybeih6u3mrusrjmmyucvisczii75qk5zrc2kumipiqj6s6z4iyhavd4m.ipfs.w3s.link/pexels-photo-2304204.webp'
+    },
+  },
+  {'insert': '\n'},
+  {
+    'insert': {
+      'image':
           'https://images.pexels.com/photos/30432517/pexels-photo-30432517/free-photo-of-people-walking-on-historic-railway-platform.jpeg',
     },
   },
