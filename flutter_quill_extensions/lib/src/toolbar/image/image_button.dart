@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill/internal.dart';
-import 'package:image_picker/image_picker.dart';
 
 import '../../common/default_image_insert.dart';
 import '../../common/image_video_utils.dart';
-import '../../editor/image/image_embed_types.dart';
 import '../quill_simple_toolbar_api.dart';
 import 'config/image_config.dart';
-import 'select_image_source.dart';
 
 // ignore: invalid_use_of_internal_member
 class QuillToolbarImageButton extends QuillToolbarBaseButtonStateless {
@@ -54,24 +51,28 @@ class QuillToolbarImageButton extends QuillToolbarBaseButtonStateless {
       }
       return;
     }
-    final source = await showSelectImageSourceDialog(
-      context: context,
-    );
-    if (source == null) {
-      return;
-    }
+    // final source = await showSelectImageSourceDialog(
+    //   context: context,
+    // );
+    // if (source == null) {
+    //   return;
+    // }
 
-    final imageUrl = switch (source) {
-      InsertImageSource.gallery =>
-        (await ImagePicker().pickImage(source: ImageSource.gallery))?.path,
-      InsertImageSource.link =>
-        context.mounted ? await _typeLink(context) : null,
-      InsertImageSource.camera =>
-        (await ImagePicker().pickImage(source: ImageSource.camera))?.path,
-    };
+    // final imageUrl = switch (source) {
+    //   InsertImageSource.gallery =>
+    //     (await ImagePicker().pickImage(source: ImageSource.gallery))?.path,
+    //   InsertImageSource.link =>
+    //     context.mounted ? await _typeLink(context) : null,
+    //   InsertImageSource.camera =>
+    //     (await ImagePicker().pickImage(source: ImageSource.camera))?.path,
+    // };
+
+    final imageUrl = context.mounted ? await _typeLink(context) : null;
+
     if (imageUrl == null) {
       return;
     }
+
     if (imageUrl.trim().isNotEmpty) {
       await _handleImageInsert(imageUrl);
     }
