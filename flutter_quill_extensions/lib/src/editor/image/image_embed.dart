@@ -6,9 +6,7 @@ import '../../common/utils/element_utils/element_utils.dart';
 import 'config/image_config.dart';
 import 'image_embed_types.dart'
     show ImageEmbedBuilderErrorWidgetBuilder, ImageEmbedBuilderProviderBuilder;
-import 'image_menu.dart';
 import 'widgets/image.dart';
-import 'widgets/web_cors/utils.dart';
 import 'widgets/web_cors/web_cors_image.dart';
 
 class QuillEditorImageEmbedBuilder extends EmbedBuilder {
@@ -46,48 +44,48 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
       imageErrorWidgetBuilder: config.imageErrorWidgetBuilder,
     );
 
-    void showImageMenu() {
-      final onImageClicked = config.onImageClicked;
-      if (onImageClicked != null) {
-        onImageClicked(imageSource);
-        return;
-      }
-      showDialog(
-        context: context,
-        builder: (_) => ImageOptionsMenu(
-          controller: embedContext.controller,
-          config: config,
-          imageSource: imageSource,
-          imageSize: imageSize,
-          readOnly: embedContext.readOnly,
-          imageProvider: imageData.provider ?? createPlaceholderImage(),
-        ),
-      );
-    }
+    // void showImageMenu() {
+    //   final onImageClicked = config.onImageClicked;
+    //   if (onImageClicked != null) {
+    //     onImageClicked(imageSource);
+    //     return;
+    //   }
+    //   showDialog(
+    //     context: context,
+    //     builder: (_) => ImageOptionsMenu(
+    //       controller: embedContext.controller,
+    //       config: config,
+    //       imageSource: imageSource,
+    //       imageSize: imageSize,
+    //       readOnly: embedContext.readOnly,
+    //       imageProvider: imageData.provider ?? createPlaceholderImage(),
+    //     ),
+    //   );
+    // }
 
     // Wrap the image in a stack with transparent overlay for better tap detection
-    final imageWithOverlay = Stack(
-      children: [
-        imageData.widget,
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: showImageMenu,
-            child: Container(
-              color: Colors.transparent,
-            ),
-          ),
-        ),
-      ],
-    );
+    // final imageWithOverlay = Stack(
+    //   children: [
+    //     imageData.widget,
+    //     Positioned.fill(
+    //       child: GestureDetector(
+    //         onTap: showImageMenu,
+    //         child: Container(
+    //           color: Colors.transparent,
+    //         ),
+    //       ),
+    //     ),
+    //   ],
+    // );
 
-    if (margin != null) {
-      return Padding(
-        padding: EdgeInsets.all(margin),
-        child: imageWithOverlay,
-      );
-    }
+    // if (margin != null) {
+    //   return Padding(
+    //     padding: EdgeInsets.all(margin),
+    //     child: imageWithOverlay,
+    //   );
+    // }
 
-    return imageWithOverlay;
+    return imageData.widget;
   }
 }
 
