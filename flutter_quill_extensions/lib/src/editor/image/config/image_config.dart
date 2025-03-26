@@ -1,6 +1,7 @@
 import 'dart:io' show File;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_quill/internal.dart';
 
 import '../image_embed_types.dart';
@@ -17,6 +18,7 @@ class QuillEditorImageEmbedConfig {
     this.imageProviderBuilder,
     this.imageErrorWidgetBuilder,
     this.onImageClicked,
+    this.errorWidget,
   }) : _onImageRemovedCallback = onImageRemovedCallback;
 
   /// [onImageRemovedCallback] is called when an image is
@@ -109,6 +111,11 @@ class QuillEditorImageEmbedConfig {
   /// to the image when it's clicked, you can pass a callback to this property.
   final void Function(String imageSource)? onImageClicked;
 
+  /// [errorWidget] allows you to provide a custom widget to be displayed
+  /// when an image fails to load. This is specifically for the WebCorsImage
+  /// in web environments.
+  final Widget? errorWidget;
+
   static ImageEmbedBuilderOnRemovedCallback get defaultOnImageRemovedCallback {
     return (imageUrl) async {
       if (kIsWeb) {
@@ -152,6 +159,7 @@ class QuillEditorImageEmbedConfig {
     ImageEmbedBuilderProviderBuilder? imageProviderBuilder,
     ImageEmbedBuilderErrorWidgetBuilder? imageErrorWidgetBuilder,
     bool? forceUseMobileOptionMenuForImageClick,
+    Widget? errorWidget,
   }) {
     return QuillEditorImageEmbedConfig(
       onImageRemovedCallback: onImageRemovedCallback ?? _onImageRemovedCallback,
@@ -160,6 +168,7 @@ class QuillEditorImageEmbedConfig {
       imageProviderBuilder: imageProviderBuilder ?? this.imageProviderBuilder,
       imageErrorWidgetBuilder:
           imageErrorWidgetBuilder ?? this.imageErrorWidgetBuilder,
+      errorWidget: errorWidget ?? this.errorWidget,
     );
   }
 }

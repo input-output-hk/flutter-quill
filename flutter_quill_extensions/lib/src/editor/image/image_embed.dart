@@ -42,6 +42,7 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
       alignment: alignment,
       imageProviderBuilder: config.imageProviderBuilder,
       imageErrorWidgetBuilder: config.imageErrorWidgetBuilder,
+      errorWidget: config.errorWidget,
     );
 
     // void showImageMenu() {
@@ -100,6 +101,7 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
   double? height,
   ImageEmbedBuilderProviderBuilder? imageProviderBuilder,
   ImageEmbedBuilderErrorWidgetBuilder? imageErrorWidgetBuilder,
+  Widget? errorWidget,
 }) {
   final screenSize = MediaQuery.sizeOf(context);
   final defaultWidth = screenSize.width * 0.8;
@@ -129,6 +131,7 @@ class QuillEditorImageEmbedBuilder extends EmbedBuilder {
       width: effectiveWidth,
       height: effectiveHeight,
       imageCache: imageProvider,
+      error: errorWidget,
     );
 
     return (

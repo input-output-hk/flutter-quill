@@ -307,6 +307,28 @@ class _HomePageState extends State<HomePage> {
                           }
                           return null;
                         },
+                        errorWidget: Center(
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.grey[200],
+                              border: Border.all(color: Colors.red),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.all(16),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(Icons.error_outline,
+                                    color: Colors.red, size: 32),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Failed to load image',
+                                  style: TextStyle(color: Colors.red[700]),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                       videoEmbedConfig: QuillEditorVideoEmbedConfig(
                         customVideoBuilder: (videoUrl, readOnly) {

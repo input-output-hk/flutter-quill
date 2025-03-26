@@ -6,6 +6,7 @@ export 'src/editor/image/config/image_web_config.dart';
 export 'src/editor/image/image_embed.dart';
 export 'src/editor/image/image_embed_types.dart';
 export 'src/editor/image/image_web_embed.dart';
+export 'src/editor/image/widgets/web_cors/web_cors_image.dart';
 export 'src/editor/video/config/video_config.dart';
 export 'src/editor/video/config/video_web_config.dart';
 export 'src/editor/video/video_embed.dart';
