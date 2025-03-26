@@ -1,8 +1,9 @@
 import 'package:flutter/widgets.dart'
-    show ImageErrorWidgetBuilder, ImageProvider;
-import 'package:flutter/widgets.dart' show BuildContext;
+    show ImageErrorWidgetBuilder, ImageProvider, BuildContext, Widget;
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meta/meta.dart' show immutable;
+
+import '../../common/image_video_utils.dart' show LinkType;
 
 /// When request picking an image, for example when the image button toolbar
 /// clicked, it should be null in case the user didn't choose any image or
@@ -28,6 +29,14 @@ typedef OnImageInsertedCallback = Future<void> Function(
   String image,
 );
 
+/// A builder function to create a custom dialog widget for image URL input
+typedef ImageLinkDialogBuilder = Widget Function(
+  BuildContext context,
+  QuillDialogTheme? dialogTheme,
+  RegExp? linkRegExp,
+  LinkType linkType,
+);
+
 enum InsertImageSource {
   gallery,
   camera,
@@ -42,6 +51,7 @@ class QuillToolbarImageConfig {
     this.onRequestPickImage,
     this.onImageInsertedCallback,
     this.onImageInsertCallback,
+    this.linkDialogBuilder,
   });
 
   final OnRequestPickImage? onRequestPickImage;
@@ -49,6 +59,22 @@ class QuillToolbarImageConfig {
   final OnImageInsertedCallback? onImageInsertedCallback;
 
   final OnImageInsertCallback? onImageInsertCallback;
+
+  /// Custom builder for the image link dialog.
+  /// If null, defaults to the standard TypeLinkDialog.
+  ///
+  /// This allows complete customization of the dialog that appears when
+  /// inserting an image via URL.
+  ///
+  /// Example:
+  /// ```dart
+  /// linkDialogBuilder: (context, dialogTheme, linkRegExp, linkType) {
+  ///   return MyCustomDialog(
+  ///     // Your custom implementation
+  ///   );
+  /// }
+  /// ```
+  final ImageLinkDialogBuilder? linkDialogBuilder;
 }
 
 typedef ImageEmbedBuilderWillRemoveCallback = Future<bool> Function(

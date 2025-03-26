@@ -81,11 +81,18 @@ class QuillToolbarImageButton extends QuillToolbarBaseButtonStateless {
   Future<String?> _typeLink(BuildContext context) async {
     final value = await showDialog<String>(
       context: context,
-      builder: (_) => TypeLinkDialog(
-        dialogTheme: options?.dialogTheme,
-        linkRegExp: options?.linkRegExp,
-        linkType: LinkType.image,
-      ),
+      builder: (_) => options?.imageButtonConfig?.linkDialogBuilder != null
+          ? options!.imageButtonConfig!.linkDialogBuilder!(
+              context,
+              options?.dialogTheme,
+              options?.linkRegExp,
+              LinkType.image,
+            )
+          : TypeLinkDialog(
+              dialogTheme: options?.dialogTheme,
+              linkRegExp: options?.linkRegExp,
+              linkType: LinkType.image,
+            ),
     );
     return value;
   }

@@ -3,8 +3,8 @@ import 'dart:io' as io show Directory, File;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_quill_example/quill_delta_sample.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 import 'package:path/path.dart' as path;
@@ -100,7 +100,41 @@ class _HomePageState extends State<HomePage> {
             QuillSimpleToolbar(
               controller: _controller,
               config: QuillSimpleToolbarConfig(
-                embedButtons: FlutterQuillEmbeds.toolbarButtons(),
+                embedButtons: FlutterQuillEmbeds.toolbarButtons(
+                  imageButtonOptions: QuillToolbarImageButtonOptions(
+                    imageButtonConfig: QuillToolbarImageConfig(
+                      // Example of custom dialog builder for image URLs
+                      linkDialogBuilder:
+                          (context, dialogTheme, linkRegExp, linkType) {
+                        final textController = TextEditingController();
+                        return AlertDialog(
+                          title: const Text('Custom Image URL Dialog'),
+                          content: TextField(
+                            decoration: const InputDecoration(
+                              hintText: 'Enter image URL',
+                              labelText: 'Image URL',
+                            ),
+                            autofocus: true,
+                            controller: textController,
+                            onSubmitted: (value) =>
+                                Navigator.pop(context, value),
+                          ),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('CANCEL'),
+                            ),
+                            TextButton(
+                              onPressed: () =>
+                                  Navigator.pop(context, textController.text),
+                              child: const Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ),
                 showClipboardPaste: true,
                 customButtons: [
                   QuillToolbarCustomButtonOptions(
