@@ -104,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                   imageButtonOptions: QuillToolbarImageButtonOptions(
                     imageButtonConfig: QuillToolbarImageConfig(
                       // Example of custom dialog builder for image URLs
-                      linkDialogBuilder: (context, _, __, ___) {
+                      insertImageUrlDialogBuilder: (context) {
                         final textController = TextEditingController();
                         return StatefulBuilder(
                           builder: (context, setState) {

@@ -3,8 +3,6 @@ import 'package:flutter/widgets.dart'
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:meta/meta.dart' show immutable;
 
-import '../../common/image_video_utils.dart' show LinkType;
-
 /// When request picking an image, for example when the image button toolbar
 /// clicked, it should be null in case the user didn't choose any image or
 /// any other reasons, and it should be the image file path as string that is
@@ -32,9 +30,6 @@ typedef OnImageInsertedCallback = Future<void> Function(
 /// A builder function to create a custom dialog widget for image URL input
 typedef ImageLinkDialogBuilder = Widget Function(
   BuildContext context,
-  QuillDialogTheme? dialogTheme,
-  RegExp? linkRegExp,
-  LinkType linkType,
 );
 
 enum InsertImageSource {
@@ -51,7 +46,7 @@ class QuillToolbarImageConfig {
     this.onRequestPickImage,
     this.onImageInsertedCallback,
     this.onImageInsertCallback,
-    this.linkDialogBuilder,
+    this.insertImageUrlDialogBuilder,
   });
 
   final OnRequestPickImage? onRequestPickImage;
@@ -60,7 +55,7 @@ class QuillToolbarImageConfig {
 
   final OnImageInsertCallback? onImageInsertCallback;
 
-  /// Custom builder for the image link dialog.
+  /// Custom builder for the image URL dialog.
   /// If null, defaults to the standard TypeLinkDialog.
   ///
   /// This allows complete customization of the dialog that appears when
@@ -68,13 +63,13 @@ class QuillToolbarImageConfig {
   ///
   /// Example:
   /// ```dart
-  /// linkDialogBuilder: (context, dialogTheme, linkRegExp, linkType) {
+  /// insertImageUrlDialogBuilder: (context) {
   ///   return MyCustomDialog(
   ///     // Your custom implementation
   ///   );
   /// }
   /// ```
-  final ImageLinkDialogBuilder? linkDialogBuilder;
+  final ImageLinkDialogBuilder? insertImageUrlDialogBuilder;
 }
 
 typedef ImageEmbedBuilderWillRemoveCallback = Future<bool> Function(
