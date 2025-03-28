@@ -28,7 +28,7 @@ typedef OnImageInsertedCallback = Future<void> Function(
 );
 
 /// A builder function to create a custom dialog widget for image URL input
-typedef ImageLinkDialogBuilder = Widget Function(
+typedef InsertImageUrlDialogBuilder = Widget Function(
   BuildContext context,
 );
 
@@ -69,7 +69,7 @@ class QuillToolbarImageConfig {
   ///   );
   /// }
   /// ```
-  final ImageLinkDialogBuilder? insertImageUrlDialogBuilder;
+  final InsertImageUrlDialogBuilder? insertImageUrlDialogBuilder;
 }
 
 typedef ImageEmbedBuilderWillRemoveCallback = Future<bool> Function(

@@ -103,21 +103,17 @@ class _HomePageState extends State<HomePage> {
                 embedButtons: FlutterQuillEmbeds.toolbarButtons(
                   imageButtonOptions: QuillToolbarImageButtonOptions(
                     imageButtonConfig: QuillToolbarImageConfig(
-                      // Example of custom dialog builder for image URLs
                       insertImageUrlDialogBuilder: (context) {
                         final textController = TextEditingController();
                         return StatefulBuilder(
                           builder: (context, setState) {
-                            // Debug: Add a preview of the URL below the text field
-                            bool isValidImageUrl =
-                                true; // Always allow submission for debugging
+                            bool isValidImageUrl = true;
                             bool hasText =
                                 textController.text.trim().isNotEmpty;
 
                             void validateUrl(String url) {
                               setState(() {
                                 hasText = url.trim().isNotEmpty;
-                                // Always consider valid for now to debug the issue
                                 isValidImageUrl = true;
                               });
                             }
