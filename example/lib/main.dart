@@ -104,146 +104,7 @@ class _HomePageState extends State<HomePage> {
                   imageButtonOptions: QuillToolbarImageButtonOptions(
                     imageButtonConfig: QuillToolbarImageConfig(
                       insertImageUrlDialogBuilder: (context) {
-                        final textController = TextEditingController();
-                        return StatefulBuilder(
-                          builder: (context, setState) {
-                            bool isValidImageUrl = true;
-                            bool hasText =
-                                textController.text.trim().isNotEmpty;
-
-                            void validateUrl(String url) {
-                              setState(() {
-                                hasText = url.trim().isNotEmpty;
-                                isValidImageUrl = true;
-                              });
-                            }
-
-                            return Dialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Container(
-                                width: 400,
-                                padding: const EdgeInsets.all(24),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.image, size: 24),
-                                        const SizedBox(width: 8),
-                                        Text(
-                                          'Insert New Image',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .titleLarge,
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Bring your proposal to life with visuals',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium
-                                          ?.copyWith(
-                                            color: Colors.grey[600],
-                                          ),
-                                    ),
-                                    const SizedBox(height: 24),
-                                    Text(
-                                      'Image URL',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelLarge,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    TextField(
-                                      controller: textController,
-                                      decoration: InputDecoration(
-                                        hintText: 'Paste link to image here',
-                                        border: OutlineInputBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                          horizontal: 12,
-                                          vertical: 16,
-                                        ),
-                                        errorText: hasText && !isValidImageUrl
-                                            ? 'Please enter a valid image URL'
-                                            : null,
-                                      ),
-                                      autofocus: true,
-                                      onChanged: validateUrl,
-                                      onSubmitted: (value) {
-                                        if (isValidImageUrl) {
-                                          Navigator.pop(context, value);
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(height: 16),
-                                    Text(
-                                      'The editor supports images from web URLs, including both traditional web servers and decentralized storage solutions. For more information, visit our',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodySmall
-                                          ?.copyWith(
-                                            color: Colors.grey[600],
-                                          ),
-                                    ),
-                                    Row(
-                                      children: [
-                                        TextButton(
-                                          onPressed: () {
-                                            // Open knowledge base link
-                                          },
-                                          style: TextButton.styleFrom(
-                                            padding: EdgeInsets.zero,
-                                            minimumSize: Size.zero,
-                                            tapTargetSize: MaterialTapTargetSize
-                                                .shrinkWrap,
-                                          ),
-                                          child: const Text('knowledge base'),
-                                        ),
-                                        Text(
-                                          ' to learn more.',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodySmall
-                                              ?.copyWith(
-                                                color: Colors.grey[600],
-                                              ),
-                                        ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 24),
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        ElevatedButton(
-                                          onPressed: isValidImageUrl
-                                              ? () => Navigator.pop(
-                                                  context, textController.text)
-                                              : null,
-                                          child: const Text('Insert Image'),
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            );
-                          },
-                        );
+                        return const InsertNewImageDialog();
                       },
                     ),
                   ),
@@ -385,6 +246,142 @@ class TimeStampEmbedBuilder extends EmbedBuilder {
         const Icon(Icons.access_time_rounded),
         Text(embedContext.node.value.data as String),
       ],
+    );
+  }
+}
+
+class InsertNewImageDialog extends StatefulWidget {
+  const InsertNewImageDialog({super.key});
+
+  @override
+  State<InsertNewImageDialog> createState() => _InsertNewImageDialogState();
+}
+
+class _InsertNewImageDialogState extends State<InsertNewImageDialog> {
+  final TextEditingController textController = TextEditingController();
+  bool isValidImageUrl = true;
+  bool hasText = false;
+
+  void validateUrl(String url) {
+    setState(() {
+      hasText = url.trim().isNotEmpty;
+      isValidImageUrl = true;
+    });
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        width: 400,
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(Icons.image, size: 24),
+                const SizedBox(width: 8),
+                Text(
+                  'Insert New Image',
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Bring your proposal to life with visuals',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              'Image URL',
+              style: Theme.of(context).textTheme.labelLarge,
+            ),
+            const SizedBox(height: 8),
+            TextField(
+              controller: textController,
+              decoration: InputDecoration(
+                hintText: 'Paste link to image here',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 16,
+                ),
+                errorText: hasText && !isValidImageUrl
+                    ? 'Please enter a valid image URL'
+                    : null,
+              ),
+              autofocus: true,
+              onChanged: validateUrl,
+              onSubmitted: (value) {
+                if (isValidImageUrl) {
+                  Navigator.pop(context, value);
+                }
+              },
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'The editor supports images from web URLs, including both traditional web servers and decentralized storage solutions. For more information, visit our',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+            ),
+            Row(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    // Open knowledge base link
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text('knowledge base'),
+                ),
+                Text(
+                  ' to learn more.',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('Cancel'),
+                ),
+                const SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: isValidImageUrl
+                      ? () => Navigator.pop(context, textController.text)
+                      : null,
+                  child: const Text('Insert Image'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
