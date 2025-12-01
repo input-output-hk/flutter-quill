@@ -1057,6 +1057,10 @@ class RenderEditableTextLine extends RenderEditableBox {
 
   @override
   Offset getOffsetForCaret(TextPosition position) {
+    if (_body  == null) {
+      return Offset.zero;
+    }
+
     return _body!.getOffsetForCaret(position, _caretPrototype) +
         (_body!.parentData as BoxParentData).offset;
   }
@@ -1098,17 +1102,29 @@ class RenderEditableTextLine extends RenderEditableBox {
 
   @override
   TextPosition getPositionForOffset(Offset offset) {
+    if (_body == null) {
+      return const TextPosition(offset: 0);
+    }
+
     return _body!.getPositionForOffset(
         offset - (_body!.parentData as BoxParentData).offset);
   }
 
   @override
   TextRange getWordBoundary(TextPosition position) {
+    if (_body == null) {
+      return const TextRange.collapsed(0);
+    }
+
     return _body!.getWordBoundary(position);
   }
 
   @override
   double preferredLineHeight(TextPosition position) {
+    if (_body == null) {
+      return 0;
+    }
+    
     return _body!.preferredLineHeight;
   }
 
